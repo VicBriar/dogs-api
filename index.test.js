@@ -10,10 +10,10 @@ const {dogs} = require('./db/seedData');
 describe('Endpoints', () => {
     // to be used in POST test
     const testDogData = {
-        breed: 'Poodle',
+        breed: 'Borzoi',
         name: 'Sasha',
         color: 'black',
-        description: 'Sasha is a beautiful black pooodle mix.  She is a great companion for her family.'
+        description: 'a good doggo.'
     };
 
     beforeAll(async () => {
@@ -33,4 +33,19 @@ describe('Endpoints', () => {
             expect(response.body[0]).toEqual(expect.objectContaining(dogs[0]));
         });
     });
+
+    describe ('POST /dogs', () => {
+        it('should create a new dog with correct data', async () => {
+            const response = await request(app)
+                .post('/dogs')
+                .send(testDogData);
+            const {breed, color, description, name} = response.body;
+
+            expect(breed).toBe(testDogData.breed);
+            expect(color).toBe(testDogData.color);
+            expect(description).toBe(testDogData.description);
+            expect(name).toBe(testDogData.name);
+            //expect(response).toBe("looking")
+        })
+    })
 });
