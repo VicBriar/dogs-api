@@ -45,7 +45,22 @@ describe('Endpoints', () => {
             expect(color).toBe(testDogData.color);
             expect(description).toBe(testDogData.description);
             expect(name).toBe(testDogData.name);
-            //expect(response).toBe("looking")
+            expect(response.status).toBe(200)
+        })
+        it("the created dog should be queryable in the database", async () => {
+            const response = await request(app)
+                .post('/dogs')
+                .send(testDogData);
+            const {id} = response.body;
+            const dog = await Dog.findOne({where:{id:id}})
+            const {breed, color, description, name} = dog;
+
+
+            expect(breed).toBe(testDogData.breed);
+            expect(color).toBe(testDogData.color);
+            expect(description).toBe(testDogData.description);
+            expect(name).toBe(testDogData.name);
+            expect(dog.id).toBeDefined();
         })
     })
 });
