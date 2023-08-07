@@ -35,7 +35,7 @@ describe('Endpoints', () => {
     });
 
     describe ('POST /dogs', () => {
-        it('should create a new dog with correct data', async () => {
+        it('should create a new dog with correct data and return 200 status', async () => {
             const response = await request(app)
                 .post('/dogs')
                 .send(testDogData);
@@ -52,7 +52,7 @@ describe('Endpoints', () => {
                 .post('/dogs')
                 .send(testDogData);
             const {id} = response.body;
-            const dog = await Dog.findOne({where:{id:id}})
+            const dog = await Dog.findByPk(id)
             const {breed, color, description, name} = dog;
 
 
@@ -61,6 +61,34 @@ describe('Endpoints', () => {
             expect(description).toBe(testDogData.description);
             expect(name).toBe(testDogData.name);
             expect(dog.id).toBeDefined();
+        })
+    })
+
+    describe("DELETE /dogs/id", () => {
+        it('should delete dog and return 200 status', async () => {
+            const postResponse = await request(app)
+            .post('/dogs')
+            .send(testDogData);
+            const {id} = postResponse.body;
+
+            const response = await request(app)
+                .delete(`/dogs/${id}`);
+
+            expect(response.status).toBe(200);
+        })
+
+        it("deleted dog should not be in database", async () => {
+            const postResponse = await request(app)
+            .post('/dogs')
+            .send(testDogData);
+            const {id} = postResponse.body;
+
+            const response = await request(app)
+                .delete(`/dogs/${id}`);
+
+            const deletedDog = await Dog.findByPk(id);
+
+            expect(deletedDog).toBe(null);
         })
     })
 });
